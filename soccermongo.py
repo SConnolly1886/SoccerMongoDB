@@ -123,8 +123,12 @@ for m in complete_url:
     sy, ey = wrap(years, 2)
     # put forward slash to separate the season years
     seez = f'{sy}/{ey}'
-    '''  eliminate bad lines, don't show in terminal, "encoding ='latin1' " means that dev tools are sourcing the files as latin1 instead of the UTF-8 files that they are. This happens irrespective of the Encoding: UTF-8.'''
-    reader = pd.read_csv(m, sep=',', error_bad_lines=False, warn_bad_lines=False, encoding='latin1')
+    ''' encoding ='latin1' means that dev tools are sourcing the files as latin1 instead of the UTF-8 files that they are. This happens irrespective of the Encoding: UTF-8.'''
+    try:
+        reader = pd.read_csv(m, sep=',', encoding='latin1', engine='python')
+    except:
+        # use index_col=False to avoid errors, deals with trailing commas as error_bad_lines=False will remove offending rows
+        reader = pd.read_csv(m, sep=',', encoding='latin1', engine='python', index_col=False)
     print(f'{arrows}{m}')
     # insert new column in pd, after div
     reader.insert(1, 'Season', '')
