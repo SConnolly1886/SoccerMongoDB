@@ -40,7 +40,7 @@ def inputCountry(msg):
 
 
 # prompting for which country.
-country = inputCountry(f'\nSelect the Country you would like:\n\n1) England\n2) Scotland\n3) Germany\n4) Italy\n5) Spain\n6) France\n7) Netherlands\n8) Belgium\n9) Portugal\n10) Turkey\n11) Greece\n12) Leave Program\n{TerminalColours.ENDC}')
+country = inputCountry(f'\nSelect which nations league(s) you would like to store in a MongoDB database:\n\n1) England\n2) Scotland\n3) Germany\n4) Italy\n5) Spain\n6) France\n7) Netherlands\n8) Belgium\n9) Portugal\n10) Turkey\n11) Greece\n12) Leave Program\n{TerminalColours.ENDC}')
 
 
 def country_select(country):
@@ -81,13 +81,12 @@ starting_url = "http://www.football-data.co.uk/"
 
 r = requests.get(starting_url + url_cc)
 
-# read/parse the cocntents of the html page
+# read/parses the cocntents of the html page
 soup = BeautifulSoup(r.content, features='lxml')
 
 allsearch = ''
 
 # reading all the links on the selected page.
-
 for link in soup.find_all('a'):
     mysearch = link.get('href')
     allsearch = allsearch+' '+mysearch
@@ -96,7 +95,6 @@ for link in soup.find_all('a'):
 y = allsearch.split()
 
 # extracting only csvs using re. Creating list of all csv files
-
 z = [list(x for x in y if re.search('^mmz.*.*.csv$', str(x)))]
 
 # indexing to get back the list from list of list.
@@ -116,6 +114,7 @@ for i in (z):
 arrows = f'{TerminalColours.OKBLUE}------------->{TerminalColours.ENDC}'
 
 # use pandas to create dataframe. Easy to convert pd to json (mongodb)
+
 readings = pd.DataFrame()
 for m in complete_url:
     # split each url. need to get years.
@@ -129,11 +128,13 @@ for m in complete_url:
     except:
         # use index_col=False to avoid errors, deals with trailing commas as error_bad_lines=False will remove offending rows
         reader = pd.read_csv(m, sep=',', encoding='latin1', engine='python', index_col=False)
+    # reader = pd.read_csv(m, sep=',', error_bad_lines=False, warn_bad_lines=False, encoding='latin1')
     print(f'{arrows}{m}')
     # insert new column in pd, after div
     reader.insert(1, 'Season', '')
     # use years split taken from links
     reader['Season'] = seez
+    # print(reader)
     # change Division (ex E0) to name (ex Premier League)
     reader.loc[(reader.Div == 'E0'), 'Div'] = 'Premier League'  # England 1
     reader.loc[(reader.Div == 'E1'), 'Div'] = 'Championship'  # England 2
@@ -166,6 +167,7 @@ readings.columns = readings.columns.str.replace('[.]', '_')
 readings['Date'] = pd.to_datetime(readings['Date']).dt.strftime('%Y-%m-%d')
 
 # Localhost connection at port `27017`.
+
 client = pymongo.MongoClient('mongodb://localhost:27017/')
 
 # create Socccer db. Collections will be by country
