@@ -20,8 +20,6 @@ class TerminalColours:
     BLINK = '\033[5m'
     BLACK = '\033[30m'
 
-# request allows to get the page and read it in python.
-
 
 def inputCountry(msg):
     while True:
@@ -72,6 +70,7 @@ def country_select(country):
 
 
 url_country = country_select(country)
+# set country to lower+m, needed for url
 url_cc = f'{url_country}m'.lower()
 
 print(f'{TerminalColours.WIN} --Downloading Files from http://www.football-data.co.uk/-- {TerminalColours.ENDC}')
@@ -82,11 +81,8 @@ starting_url = "http://www.football-data.co.uk/"
 
 r = requests.get(starting_url + url_cc)
 
-# reads the cocntents of the html page
+# read/parse the cocntents of the html page
 soup = BeautifulSoup(r.content, features='lxml')
-
-# prettifying the contents-optional
-# print(soup.prettify)
 
 allsearch = ''
 
@@ -98,7 +94,6 @@ for link in soup.find_all('a'):
 
 # spliting to get the array of the strings.
 y = allsearch.split()
-
 
 # extracting only csvs using re. Creating list of all csv files
 
@@ -121,7 +116,6 @@ for i in (z):
 arrows = f'{TerminalColours.OKBLUE}------------->{TerminalColours.ENDC}'
 
 # use pandas to create dataframe. Easy to convert pd to json (mongodb)
-
 readings = pd.DataFrame()
 for m in complete_url:
     # split each url. need to get years.
@@ -168,7 +162,6 @@ readings.columns = readings.columns.str.replace('[.]', '_')
 readings['Date'] = pd.to_datetime(readings['Date']).dt.strftime('%Y-%m-%d')
 
 # Localhost connection at port `27017`.
-
 client = pymongo.MongoClient('mongodb://localhost:27017/')
 
 # create Socccer db. Collections will be by country
