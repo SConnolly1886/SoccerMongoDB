@@ -8,7 +8,7 @@ After selecting a country. A website http://www.football-data.co.uk/ that has so
 ![Capture](https://user-images.githubusercontent.com/62077185/106338703-78ec4800-6262-11eb-9d58-3aa36713d6ff.JPG)
 
 
-After all csv files are found for the selected country, the csv files for each season put into a pandas dataframe. This dataframe is then parsed and converted into json.
+After all csv files are found for the selected country, the csv files for each season are put into a pandas dataframe. This dataframe is then parsed and converted into json.
 At this point the data is uploaded to a mongodb database. 
 The database is called 'Soccer'.
 The collection is named after the country selected. Ex 'Netherlands'
